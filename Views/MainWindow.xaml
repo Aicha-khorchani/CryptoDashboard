@@ -1,0 +1,67 @@
+﻿<Window x:Class="CryptoDashboard.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        Title="Crypto Dashboard"
+        Height="600"
+        Width="900"
+        Background="{StaticResource BackgroundBrush}">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top bar: search + refresh -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBox Width="250"
+                     Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,10,0"/>
+            <Button Content="Refresh"
+                    Command="{Binding RefreshCommand}"
+                    Width="120"
+                    Height="35"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Coin list -->
+<ListView Grid.Column="0"
+          ItemsSource="{Binding Coins}"
+          SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
+          Background="Black" Foreground="White">
+    <ListView.ItemTemplate>
+        <DataTemplate>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Text="{Binding Name}" Width="120" Foreground="White"/>
+                <TextBlock Text="{Binding CurrentPrice}" Width="100" Foreground="White"/>
+            </StackPanel>
+        </DataTemplate>
+    </ListView.ItemTemplate>
+</ListView>
+
+
+
+            <!-- Chart -->
+<oxy:PlotView Grid.Column="1"
+              Model="{Binding PlotModel}"
+              Margin="10"
+              Background="Transparent" />
+
+
+
+
+            <!-- Loading indicator -->
+            <ProgressBar IsIndeterminate="True"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Top"
+                         Height="5"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,6 @@
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net6.0-windows\CryptoDashboard.csproj.AssemblyReference.cache
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net6.0-windows\Resources\Theme.baml
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net6.0-windows\App.g.cs
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net6.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net6.0-windows\CryptoDashboard_MarkupCompile.cache
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net6.0-windows\CryptoDashboard_MarkupCompile.lref
