@@ -35,6 +35,7 @@ namespace CryptoDashboard.Services
             var json = await response.Content.ReadAsStringAsync();
 
             Logger.Log("JSON LENGTH → " + json.Length);
+            Logger.Log("First coin JSON → " + (json.Length > 1000 ? json.Substring(0, 1000) : json));
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
