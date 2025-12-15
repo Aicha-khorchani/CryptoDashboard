@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+
+
 namespace CryptoDashboard.Models
 {
     public class Coin
@@ -15,5 +18,8 @@ namespace CryptoDashboard.Models
         public decimal TotalVolume { get; set; }
 
         public string ImageUrl { get; set; } = string.Empty;
+        
+        [JsonIgnore]
+        public bool IsFavorite { get; set; } = false;
     }
 }

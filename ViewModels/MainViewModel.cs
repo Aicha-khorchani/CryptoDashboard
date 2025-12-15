@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
+
 namespace CryptoDashboard.ViewModels
 {
     public class MainViewModel : BaseViewModel
@@ -17,16 +19,20 @@ namespace CryptoDashboard.ViewModels
         private readonly CoinGeckoService _coinService;
         private readonly FavoritesService _favoritesService;
         private readonly Dispatcher _dispatcher;
+        private string? _lastCoinId;
+        private bool _isLoadingChart;
 
         private bool _isLoading;
         private string _searchQuery = string.Empty;
-        private Coin? _selectedCoin;
+        private CoinViewModel? _selectedCoin;
+        private List<string> _favoriteIds;
 
-        private ObservableCollection<Coin> _allCoins = new();
+        private ObservableCollection<CoinViewModel> _allCoins = new();
 
-        public ObservableCollection<Coin> Coins { get; } = new();
+        public ObservableCollection<CoinViewModel> Coins { get; } = new();
         public PlotModel PlotModel { get; }
         public AsyncRelayCommand RefreshCommand { get; }
+        public RelayCommand ToggleFavoriteCommand { get; }
 
         public MainViewModel()
         {
@@ -35,6 +41,11 @@ namespace CryptoDashboard.ViewModels
             _dispatcher = Dispatcher.CurrentDispatcher;
 
             RefreshCommand = new AsyncRelayCommand(LoadCoinsAsync);
+            ToggleFavoriteCommand = new RelayCommand(param =>
+            {
+               if (param is CoinViewModel coinVM)
+               ToggleFavorite(coinVM);
+            });
 
             PlotModel = new PlotModel
             {
@@ -61,6 +72,8 @@ namespace CryptoDashboard.ViewModels
                 TicklineColor = OxyColors.White,
                 AxislineColor = OxyColors.White
             });
+
+            _favoriteIds = _favoritesService.LoadFavorites();
         }
 
         public bool IsLoading
@@ -76,61 +89,60 @@ namespace CryptoDashboard.ViewModels
             {
                 if (SetProperty(ref _searchQuery, value))
                 {
-                    Debug.WriteLine($"SearchQuery changed: {_searchQuery}");
                     FilterCoins();
                 }
             }
         }
 
-        public Coin? SelectedCoin
+        public CoinViewModel? SelectedCoin
         {
             get => _selectedCoin;
             set
             {
                 if (SetProperty(ref _selectedCoin, value) && value != null)
                 {
-                    Debug.WriteLine($"SelectedCoin changed: {value.Name} ({value.Symbol})");
-                    // Safe fire-and-forget async call
-                    _ = LoadCoinHistoryAsync(value);
+                    _ = LoadCoinHistoryAsync(value.GetModel());
                 }
             }
         }
 
-        // ✅ Make public so MainWindow can call it
         public async Task LoadCoinsAsync()
         {
-            try
+            IsLoading = true;
+
+            var coins = await _coinService.GetMarketCoinsAsync() ?? new List<Coin>();
+
+            await _dispatcher.InvokeAsync(() =>
             {
-                Debug.WriteLine("Loading coins...");
-                IsLoading = true;
+                Coins.Clear();
+                _allCoins.Clear();
 
-                var coins = await _coinService.GetMarketCoinsAsync();
-
-                if (coins == null)
-                    coins = new System.Collections.Generic.List<Coin>();
-
-                await _dispatcher.InvokeAsync(() =>
+                foreach (var coin in coins)
                 {
-                    Coins.Clear();
-                    _allCoins.Clear();
-                    foreach (var coin in coins)
-                    {
-                        _allCoins.Add(coin);
-                        Coins.Add(coin);
-                        Debug.WriteLine($"Coin added: {coin.Name} ({coin.Symbol}) - {coin.CurrentPrice}");
-                    }
-                });
+                    coin.IsFavorite = _favoriteIds.Contains(coin.Id);
+                    var vm = new CoinViewModel(coin);
+                    _allCoins.Add(vm);
+                    Coins.Add(vm);
+                }
+            });
 
-                Debug.WriteLine("Finished loading coins.");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Error loading coins: " + ex);
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            IsLoading = false;
+        }
+
+        public void ToggleFavorite(CoinViewModel coinVM)
+        {
+            if (coinVM == null) return;
+
+            bool wasFav = _favoriteIds.Contains(coinVM.Id);
+
+            if (wasFav)
+                _favoriteIds.Remove(coinVM.Id);
+            else
+                _favoriteIds.Add(coinVM.Id);
+
+            coinVM.IsFavorite = !wasFav;
+
+            _favoritesService.SaveFavorites(_favoriteIds);
         }
 
         private void FilterCoins()
@@ -142,10 +154,9 @@ namespace CryptoDashboard.ViewModels
                 {
                     if (string.IsNullOrWhiteSpace(SearchQuery) ||
                         coin.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
-                        coin.Symbol.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+                        coin.Id.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
                     {
                         Coins.Add(coin);
-                        Debug.WriteLine($"Coin matched filter: {coin.Name} ({coin.Symbol})");
                     }
                 }
             });
@@ -153,17 +164,19 @@ namespace CryptoDashboard.ViewModels
 
         private async Task LoadCoinHistoryAsync(Coin coin)
         {
+            if (_lastCoinId == coin.Id || _isLoadingChart) return;
+
+            _lastCoinId = coin.Id;
+            _isLoadingChart = true;
+
             try
             {
-                Debug.WriteLine($"Loading history for {coin.Name}...");
-                var history = await _coinService.GetMarketChartAsync(coin.Id, 7);
-
-                if (history == null)
-                    history = new System.Collections.Generic.List<PricePoint>();
+                var history = await _coinService.GetMarketChartAsync(coin.Id, 7) ?? new List<PricePoint>();
 
                 await _dispatcher.InvokeAsync(() =>
                 {
                     PlotModel.Series.Clear();
+
                     var series = new LineSeries
                     {
                         Title = coin.Name,
@@ -172,20 +185,15 @@ namespace CryptoDashboard.ViewModels
                     };
 
                     foreach (var point in history)
-                    {
                         series.Points.Add(DateTimeAxis.CreateDataPoint(point.Date, (double)point.Price));
-                        Debug.WriteLine($"Point added: {point.Date:dd/MM} -> {point.Price}");
-                    }
 
                     PlotModel.Series.Add(series);
                     PlotModel.InvalidatePlot(true);
                 });
-
-                Debug.WriteLine($"Finished loading history for {coin.Name}");
             }
-            catch (Exception ex)
+            finally
             {
-                Debug.WriteLine($"Error loading history for {coin.Name}: {ex}");
+                _isLoadingChart = false;
             }
         }
     }

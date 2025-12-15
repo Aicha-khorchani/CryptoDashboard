@@ -1,0 +1,4 @@
+[20:38:47] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[20:38:48] STATUS → OK
+[20:38:48] JSON LENGTH → 39777
+[20:38:48] Coins returned: 50

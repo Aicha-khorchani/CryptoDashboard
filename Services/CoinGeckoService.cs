@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CryptoDashboard.Models;
+using CryptoDashboard.Helpers; 
 
 namespace CryptoDashboard.Services
 {
@@ -15,7 +16,10 @@ namespace CryptoDashboard.Services
         {
             BaseAddress = new Uri("https://api.coingecko.com/api/v3/")
         };
-
+            static CoinGeckoService()
+            {
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("CryptoDashboardApp/1.0");
+            }
         public async Task<List<Coin>> GetMarketCoinsAsync(string vsCurrency = "usd")
         {
             var url =
@@ -23,20 +27,21 @@ namespace CryptoDashboard.Services
                 "&order=market_cap_desc" +
                 "&per_page=50&page=1" +
                 "&sparkline=false";
-
+            Logger.Log("REQUEST → " + url);
             var response = await _httpClient.GetAsync(url);
+            Logger.Log("STATUS → " + response.StatusCode);
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
 
-
+            Logger.Log("JSON LENGTH → " + json.Length);
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
 
             var coins = JsonSerializer.Deserialize<List<Coin>>(json, options);
-Console.WriteLine("Coins returned: " + (coins?.Count ?? 0));
+Logger.Log("Coins returned: " + (coins?.Count ?? 0));
 
             return coins ?? new List<Coin>();
         }

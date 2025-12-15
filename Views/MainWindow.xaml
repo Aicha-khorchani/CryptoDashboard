@@ -34,16 +34,43 @@
 <ListView Grid.Column="0"
           ItemsSource="{Binding Coins}"
           SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
-          Background="Black" Foreground="White">
+          Background="Black"
+          Foreground="White">
+
     <ListView.ItemTemplate>
         <DataTemplate>
             <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBlock Text="{Binding Name}" Width="120" Foreground="White"/>
-                <TextBlock Text="{Binding CurrentPrice}" Width="100" Foreground="White"/>
+                <TextBlock Text="{Binding Name}"
+                           Width="110"
+                           Foreground="White"/>
+
+                <TextBlock Text="{Binding CurrentPrice}"
+                           Width="80"
+                           Foreground="White"/>
+
+<Button Content="★"
+        Width="30"
+        Command="{Binding DataContext.ToggleFavoriteCommand,
+                          RelativeSource={RelativeSource AncestorType=ListView}}"
+        CommandParameter="{Binding}">
+    <Button.Style>
+        <Style TargetType="Button">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                    <Setter Property="Foreground" Value="Gold"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Button.Style>
+</Button>
+
             </StackPanel>
         </DataTemplate>
     </ListView.ItemTemplate>
+
 </ListView>
+
 
 
 

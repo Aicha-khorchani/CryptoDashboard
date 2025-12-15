@@ -1,11 +1,3 @@
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard.csproj.AssemblyReference.cache
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\Resources\Theme.baml
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\Views\MainWindow.baml
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\Views\MainWindow.g.cs
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\App.g.cs
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\GeneratedInternalTypeHelper.g.cs
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard_MarkupCompile.cache
-C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard_MarkupCompile.lref
 C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\CryptoDashboard.exe
 C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\CryptoDashboard.deps.json
 C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\CryptoDashboard.runtimeconfig.json
@@ -14,6 +6,14 @@ C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\CryptoDashb
 C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\OxyPlot.dll
 C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\OxyPlot.Wpf.dll
 C:\workspace\crypto-project\CryptoDashboard\bin\Debug\net7.0-windows\OxyPlot.Wpf.Shared.dll
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard.csproj.AssemblyReference.cache
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\Resources\Theme.baml
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\Views\MainWindow.baml
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\Views\MainWindow.g.cs
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\App.g.cs
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard_MarkupCompile.cache
+C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard_MarkupCompile.lref
 C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\App.baml
 C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard.g.resources
 C:\workspace\crypto-project\CryptoDashboard\obj\Debug\net7.0-windows\CryptoDashboard.GeneratedMSBuildEditorConfig.editorconfig
