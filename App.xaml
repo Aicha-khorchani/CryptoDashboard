@@ -9,6 +9,7 @@
             <!-- Converters -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <helpers:PriceColorConverter x:Key="PriceColorConverter"/>
+            <helpers:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 
             <!-- Theme -->
             <ResourceDictionary.MergedDictionaries>

@@ -12,3 +12,21 @@
 [20:57:29] JSON LENGTH → 39799
 [20:57:29] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":86181,"market_cap":1718060464686,"market_cap_rank":1,"fully_diluted_valuation":1718060464686,"total_volume":49711463740,"high_24h":89935,"low_24h":85427,"price_change_24h":-2493.6406904154283,"price_change_percentage_24h":-2.81213,"market_cap_change_24h":-50793303444.07788,"market_cap_change_percentage_24h":-2.87154,"circulating_supply":19962509.0,"total_supply":19962509.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-31.58263,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":127111.04943,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-15T19:56:45.904Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2943.32,"market_cap":354696798417,"market_cap_rank":2,"fully_dil
 [20:57:29] Coins returned: 50
+[21:56:29] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[21:56:30] STATUS → OK
+[21:56:30] JSON LENGTH → 39795
+[21:56:30] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":85867,"market_cap":1714064634140,"market_cap_rank":1,"fully_diluted_valuation":1714064634140,"total_volume":50436655878,"high_24h":89935,"low_24h":85427,"price_change_24h":-2689.2410841109668,"price_change_percentage_24h":-3.03677,"market_cap_change_24h":-55868632619.184326,"market_cap_change_percentage_24h":-3.15654,"circulating_supply":19962543.0,"total_supply":19962543.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-31.80797,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":126692.0647,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-15T20:55:43.017Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2931.4,"market_cap":353684016511,"market_cap_rank":2,"fully_dilu
+[21:56:30] Coins returned: 50
+[21:57:04] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[21:57:05] STATUS → TooManyRequests
+[21:57:11] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[21:57:11] STATUS → TooManyRequests
+[22:06:04] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[22:06:04] STATUS → OK
+[22:06:04] JSON LENGTH → 39798
+[22:06:04] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":85717,"market_cap":1712297702009,"market_cap_rank":1,"fully_diluted_valuation":1712297702009,"total_volume":50601776869,"high_24h":89935,"low_24h":85427,"price_change_24h":-2777.744373762558,"price_change_percentage_24h":-3.1389,"market_cap_change_24h":-55659374941.46704,"market_cap_change_percentage_24h":-3.14823,"circulating_supply":19962543.0,"total_supply":19962543.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-31.90683,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":126508.25425,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-15T21:05:24.202Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2928.01,"market_cap":353477446916,"market_cap_rank":2,"fully_dilut
+[22:06:04] Coins returned: 50
+[22:06:17] Loading history for coin: XRP (ripple)
+[22:06:17] Finished loading history for coin: XRP
+[22:06:39] Loading history for coin: BNB (binancecoin)
+[22:06:40] Finished loading history for coin: BNB

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using CryptoDashboard.Helpers;
@@ -10,7 +9,6 @@ using CryptoDashboard.Services;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-
 
 namespace CryptoDashboard.ViewModels
 {
@@ -30,9 +28,21 @@ namespace CryptoDashboard.ViewModels
         private ObservableCollection<CoinViewModel> _allCoins = new();
 
         public ObservableCollection<CoinViewModel> Coins { get; } = new();
-        public PlotModel PlotModel { get; }
+
+        public PlotModel MainPlotModel { get; }  // default chart
+        public PlotModel CurrentPlotModel { get; set; } // bind PlotView to this
+
         public AsyncRelayCommand RefreshCommand { get; }
         public RelayCommand ToggleFavoriteCommand { get; }
+        public RelayCommand ShowCoinDetailsCommand { get; }
+        public RelayCommand ToggleChartCommand { get; }
+
+        private CoinDetailsViewModel? _currentCoinDetails;
+        public CoinDetailsViewModel? CurrentCoinDetails
+        {
+            get => _currentCoinDetails;
+            set => SetProperty(ref _currentCoinDetails, value);
+        }
 
         public MainViewModel()
         {
@@ -43,18 +53,24 @@ namespace CryptoDashboard.ViewModels
             RefreshCommand = new AsyncRelayCommand(LoadCoinsAsync);
             ToggleFavoriteCommand = new RelayCommand(param =>
             {
-               if (param is CoinViewModel coinVM)
-               ToggleFavorite(coinVM);
+                if (param is CoinViewModel coinVM)
+                    ToggleFavorite(coinVM);
             });
 
-            PlotModel = new PlotModel
+            ShowCoinDetailsCommand = new RelayCommand(async param =>
+            {
+                if (param is CoinViewModel coinVM)
+                    await ShowCoinDetailsAsync(coinVM.GetModel());
+            });
+
+            // Default chart
+            MainPlotModel = new PlotModel
             {
                 Title = "Price Chart",
                 Background = OxyColors.Black,
                 TextColor = OxyColors.White
             };
-
-            PlotModel.Axes.Add(new DateTimeAxis
+            MainPlotModel.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
                 StringFormat = "dd/MM",
@@ -63,8 +79,7 @@ namespace CryptoDashboard.ViewModels
                 TicklineColor = OxyColors.White,
                 AxislineColor = OxyColors.White
             });
-
-            PlotModel.Axes.Add(new LinearAxis
+            MainPlotModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
                 Title = "Price",
@@ -73,7 +88,83 @@ namespace CryptoDashboard.ViewModels
                 AxislineColor = OxyColors.White
             });
 
+ToggleChartCommand = new RelayCommand(_ =>
+{
+    if (CurrentPlotModel == MainPlotModel && CurrentCoinDetails != null)
+        CurrentPlotModel = CurrentCoinDetails.PlotModel;
+    else
+        CurrentPlotModel = MainPlotModel;
+
+    OnPropertyChanged(nameof(CurrentPlotModel));
+});
+
+
+            // Initially bind to main chart
+            CurrentPlotModel = MainPlotModel;
+
             _favoriteIds = _favoritesService.LoadFavorites();
+        }
+
+        private async Task ShowCoinDetailsAsync(Coin coin)
+        {
+            if (coin == null) return;
+
+            IsLoading = true;
+            try
+            {
+                CurrentCoinDetails = new CoinDetailsViewModel(coin);
+                await CurrentCoinDetails.LoadHistoryAsync(30);
+
+                // Switch CurrentPlotModel to coin detail
+                CurrentPlotModel = CurrentCoinDetails.PlotModel;
+                OnPropertyChanged(nameof(CurrentPlotModel));
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task LoadCoinHistoryAsync(Coin coin)
+        {
+            if (_lastCoinId == coin.Id || _isLoadingChart) return;
+
+            _lastCoinId = coin.Id;
+            _isLoadingChart = true;
+
+            try
+            {
+                var history = await _coinService.GetMarketChartAsync(coin.Id, 7) ?? new List<PricePoint>();
+              if (!_dispatcher.HasShutdownStarted)
+              {
+                await _dispatcher.InvokeAsync(() =>
+                {
+                    MainPlotModel.Series.Clear();
+
+                    var series = new LineSeries
+                    {
+                        Title = coin.Name,
+                        StrokeThickness = 2,
+                        Color = OxyColors.SteelBlue
+                    };
+
+                    foreach (var point in history)
+                        series.Points.Add(DateTimeAxis.CreateDataPoint(point.Date, (double)point.Price));
+
+                    MainPlotModel.Series.Add(series);
+                    MainPlotModel.Title = coin.Name + " - 7 days";
+                    MainPlotModel.InvalidatePlot(true);
+
+                    // Switch CurrentPlotModel back to main
+                    CurrentPlotModel = MainPlotModel;
+                    OnPropertyChanged(nameof(CurrentPlotModel));
+                });
+              }
+            }
+            finally
+            {
+                _isLoadingChart = false;
+            }
         }
 
         public bool IsLoading
@@ -88,23 +179,35 @@ namespace CryptoDashboard.ViewModels
             set
             {
                 if (SetProperty(ref _searchQuery, value))
-                {
                     FilterCoins();
-                }
             }
         }
 
-        public CoinViewModel? SelectedCoin
+public CoinViewModel? SelectedCoin
+{
+    get => _selectedCoin;
+    set
+    {
+        if (SetProperty(ref _selectedCoin, value) && value != null)
         {
-            get => _selectedCoin;
-            set
+            // Fire-and-forget async safely with logging
+            _ = Task.Run(async () =>
             {
-                if (SetProperty(ref _selectedCoin, value) && value != null)
+                try
                 {
-                    _ = LoadCoinHistoryAsync(value.GetModel());
+                    Logger.Log($"Loading history for coin: {value.Name} ({value.Id})");
+                    await LoadCoinHistoryAsync(value.GetModel());
+                    Logger.Log($"Finished loading history for coin: {value.Name}");
                 }
-            }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Error loading history for coin {value.Name}: {ex}");
+                }
+            });
         }
+    }
+}
+
 
         public async Task LoadCoinsAsync()
         {
@@ -160,41 +263,6 @@ namespace CryptoDashboard.ViewModels
                     }
                 }
             });
-        }
-
-        private async Task LoadCoinHistoryAsync(Coin coin)
-        {
-            if (_lastCoinId == coin.Id || _isLoadingChart) return;
-
-            _lastCoinId = coin.Id;
-            _isLoadingChart = true;
-
-            try
-            {
-                var history = await _coinService.GetMarketChartAsync(coin.Id, 7) ?? new List<PricePoint>();
-
-                await _dispatcher.InvokeAsync(() =>
-                {
-                    PlotModel.Series.Clear();
-
-                    var series = new LineSeries
-                    {
-                        Title = coin.Name,
-                        StrokeThickness = 2,
-                        Color = OxyColors.SteelBlue
-                    };
-
-                    foreach (var point in history)
-                        series.Points.Add(DateTimeAxis.CreateDataPoint(point.Date, (double)point.Price));
-
-                    PlotModel.Series.Add(series);
-                    PlotModel.InvalidatePlot(true);
-                });
-            }
-            finally
-            {
-                _isLoadingChart = false;
-            }
         }
     }
 }

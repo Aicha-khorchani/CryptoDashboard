@@ -7,6 +7,7 @@
         Width="900"
         Background="{StaticResource BackgroundBrush}">
 
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -31,57 +32,57 @@
             </Grid.ColumnDefinitions>
 
             <!-- Coin list -->
-<ListView Grid.Column="0"
-          ItemsSource="{Binding Coins}"
-          SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
-          Background="Black"
-          Foreground="White">
+            <ListView Grid.Column="0"
+                      ItemsSource="{Binding Coins}"
+                      SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
+                      Background="Black"
+                      Foreground="White">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <TextBlock Text="{Binding Name}" Width="110" Foreground="White"/>
+                            <TextBlock Text="{Binding CurrentPrice}" Width="80" Foreground="White"/>
+                            <Button Content="View"
+                                    Width="50"
+                                    Command="{Binding DataContext.ShowCoinDetailsCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding}" />
+                            <Button Content="★"
+                                    Width="30"
+                                    Command="{Binding DataContext.ToggleFavoriteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                    CommandParameter="{Binding}">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                                <Setter Property="Foreground" Value="Gold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-    <ListView.ItemTemplate>
-        <DataTemplate>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBlock Text="{Binding Name}"
-                           Width="110"
-                           Foreground="White"/>
-
-                <TextBlock Text="{Binding CurrentPrice}"
-                           Width="80"
-                           Foreground="White"/>
-
-<Button Content="★"
-        Width="30"
-        Command="{Binding DataContext.ToggleFavoriteCommand,
-                          RelativeSource={RelativeSource AncestorType=ListView}}"
-        CommandParameter="{Binding}">
-    <Button.Style>
-        <Style TargetType="Button">
-            <Setter Property="Foreground" Value="Gray"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsFavorite}" Value="True">
-                    <Setter Property="Foreground" Value="Gold"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Button.Style>
-</Button>
-
+            <!-- Right panel: ToggleChart + Chart -->
+            <StackPanel Grid.Column="1" Margin="10">
+                <Button Content="Toggle Chart"
+                        Width="120"
+                        Margin="0,0,0,10"
+                        Command="{Binding ToggleChartCommand}"/>
+                
+                <TextBlock Text="{Binding CurrentCoinDetails.Coin.Name, TargetNullValue=''}"
+                           FontSize="20"
+                           Foreground="White"
+                           Margin="0,0,0,10"
+                           Visibility="{Binding CurrentCoinDetails, Converter={StaticResource NullToVisibilityConverter}}"/>
+    
+                <oxy:PlotView Model="{Binding CurrentPlotModel}"
+                              Height="400"
+                              Background="Transparent"/>
             </StackPanel>
-        </DataTemplate>
-    </ListView.ItemTemplate>
-
-</ListView>
-
-
-
-
-            <!-- Chart -->
-<oxy:PlotView Grid.Column="1"
-              Model="{Binding PlotModel}"
-              Margin="10"
-              Background="Transparent" />
-
-
-
 
             <!-- Loading indicator -->
             <ProgressBar IsIndeterminate="True"
