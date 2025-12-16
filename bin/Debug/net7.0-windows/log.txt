@@ -30,3 +30,23 @@
 [22:06:17] Finished loading history for coin: XRP
 [22:06:39] Loading history for coin: BNB (binancecoin)
 [22:06:40] Finished loading history for coin: BNB
+[21:56:30] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[21:56:31] STATUS → OK
+[21:56:31] JSON LENGTH → 39104
+[21:56:31] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":87703,"market_cap":1749756624629,"market_cap_rank":1,"fully_diluted_valuation":1749759341781,"total_volume":49973730415,"high_24h":87918,"low_24h":85575,"price_change_24h":1830.55,"price_change_percentage_24h":2.1317,"market_cap_change_24h":35691990489,"market_cap_change_percentage_24h":2.0823,"circulating_supply":19962981.0,"total_supply":19963012.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-30.46266,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":129193.45606,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-16T20:56:00.637Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2953.01,"market_cap":356365233244,"market_cap_rank":2,"fully_diluted_valuation":3563652
+[21:56:31] Coins returned: 50
+[21:56:48] Loading history for coin: Dogecoin (dogecoin)
+[21:56:48] Finished loading history for coin: Dogecoin
+[21:56:53] Loading history for coin: Lido Staked Ether (staked-ether)
+[21:56:53] Finished loading history for coin: Lido Staked Ether
+[21:57:46] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[21:57:46] STATUS → TooManyRequests
+[21:57:57] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[21:57:58] STATUS → OK
+[21:57:58] JSON LENGTH → 39084
+[21:57:58] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":87717,"market_cap":1749756624629,"market_cap_rank":1,"fully_diluted_valuation":1749759341781,"total_volume":50170378771,"high_24h":87918,"low_24h":85575,"price_change_24h":1844.26,"price_change_percentage_24h":2.14766,"market_cap_change_24h":35691990489,"market_cap_change_percentage_24h":2.0823,"circulating_supply":19962981.0,"total_supply":19963012.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-30.46266,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":129193.45606,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-16T20:56:50.917Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2953.41,"market_cap":356365233244,"market_cap_rank":2,"fully_diluted_valuation":356365
+[21:57:58] Coins returned: 50
+[21:58:29] Loading history for coin: Ethereum (ethereum)
+[21:58:30] Finished loading history for coin: Ethereum
+[21:58:35] Loading history for coin: Tether (tether)
+[21:58:35] Finished loading history for coin: Tether

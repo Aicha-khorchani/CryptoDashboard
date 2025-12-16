@@ -45,6 +45,15 @@ namespace CryptoDashboard.ViewModels
         }
 
         public Coin Coin { get; }
+public string Name => Coin.Name;
+public string Symbol => Coin.Symbol.ToUpper();
+
+public decimal CurrentPrice => Coin.CurrentPrice;
+public decimal PriceChange24h => Coin.PriceChangePercentage24h;
+public decimal MarketCap => Coin.MarketCap;
+public decimal TotalVolume => Coin.TotalVolume;
+
+public string ImageUrl => Coin.ImageUrl;
 
         public PlotModel PlotModel { get; }
 
@@ -65,9 +74,12 @@ namespace CryptoDashboard.ViewModels
             {
                 series.Points.Add(DateTimeAxis.CreateDataPoint(point.Date, (double)point.Price));
             }
-
             PlotModel.Series.Add(series);
             PlotModel.InvalidatePlot(true);
+            OnPropertyChanged(nameof(CurrentPrice));
+            OnPropertyChanged(nameof(PriceChange24h));
+            OnPropertyChanged(nameof(MarketCap));
+            OnPropertyChanged(nameof(TotalVolume));
         }
     }
 }

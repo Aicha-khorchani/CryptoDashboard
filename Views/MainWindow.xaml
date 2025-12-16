@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.org/wpf"
         Title="Crypto Dashboard"
-        Height="600"
-        Width="900"
+        Height="720"
+        Width="1000"
         Background="{StaticResource BackgroundBrush}">
 
 
@@ -25,71 +25,128 @@
                     Height="35"/>
         </StackPanel>
 
-        <Grid Grid.Row="1">
+<Grid Grid.Row="1">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="250"/>
+        <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- LEFT: Coin list (scrollable) -->
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Disabled"
+                  HorizontalScrollBarVisibility="Disabled">
+
+        <ListView ItemsSource="{Binding Coins}"
+                  SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
+                  Background="Black"
+                  Foreground="White">
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <TextBlock Text="{Binding Name}" Width="110" Foreground="White"/>
+                        <TextBlock Text="{Binding CurrentPrice}" Width="80" Foreground="White"/>
+
+                        <Button Content="View"
+                                Width="50"
+                                Command="{Binding DataContext.ShowCoinDetailsCommand,
+                                          RelativeSource={RelativeSource AncestorType=ListView}}"
+                                CommandParameter="{Binding}" />
+
+                        <Button Content="★"
+                                Width="30"
+                                Command="{Binding DataContext.ToggleFavoriteCommand,
+                                          RelativeSource={RelativeSource AncestorType=ListView}}"
+                                CommandParameter="{Binding}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Foreground" Value="Gray"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                            <Setter Property="Foreground" Value="Gold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+    </ScrollViewer>
+
+    <!-- RIGHT: Chart + Stats -->
+    <StackPanel Grid.Column="1" Margin="10">
+
+        <Button Content="Toggle Chart"
+                Width="120"
+                Margin="0,0,0,10"
+                Command="{Binding ToggleChartCommand}"/>
+
+        <TextBlock Text="{Binding CurrentCoinDetails.Name}"
+                   FontSize="20"
+                   Foreground="White"
+                   Margin="0,0,0,10"
+                   Visibility="{Binding CurrentCoinDetails,
+                                        StringFormat='Price: {0:C2}',Converter={StaticResource NullToVisibilityConverter}}"/>
+
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Coin list -->
-            <ListView Grid.Column="0"
-                      ItemsSource="{Binding Coins}"
-                      SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
-                      Background="Black"
-                      Foreground="White">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="5">
-                            <TextBlock Text="{Binding Name}" Width="110" Foreground="White"/>
-                            <TextBlock Text="{Binding CurrentPrice}" Width="80" Foreground="White"/>
-                            <Button Content="View"
-                                    Width="50"
-                                    Command="{Binding DataContext.ShowCoinDetailsCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                    CommandParameter="{Binding}" />
-                            <Button Content="★"
-                                    Width="30"
-                                    Command="{Binding DataContext.ToggleFavoriteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Foreground" Value="Gray"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsFavorite}" Value="True">
-                                                <Setter Property="Foreground" Value="Gold"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <!-- Chart -->
+            <oxy:PlotView Grid.Column="0"
+                          Model="{Binding CurrentPlotModel}"
+                          Height="400"
+                          Background="Transparent"/>
 
-            <!-- Right panel: ToggleChart + Chart -->
-            <StackPanel Grid.Column="1" Margin="10">
-                <Button Content="Toggle Chart"
-                        Width="120"
-                        Margin="0,0,0,10"
-                        Command="{Binding ToggleChartCommand}"/>
-                
-                <TextBlock Text="{Binding CurrentCoinDetails.Coin.Name, TargetNullValue=''}"
-                           FontSize="20"
+            <!-- Stats panel -->
+            <StackPanel Grid.Column="1"
+                        Margin="20,0,0,0"
+                        Visibility="{Binding CurrentCoinDetails,
+                                             Converter={StaticResource NullToVisibilityConverter}}">
+
+                <TextBlock Text="{Binding CurrentCoinDetails.CurrentPrice,
+                                          StringFormat='Price: {0:C}'}"
+                           FontSize="16"
                            Foreground="White"
-                           Margin="0,0,0,10"
-                           Visibility="{Binding CurrentCoinDetails, Converter={StaticResource NullToVisibilityConverter}}"/>
-    
-                <oxy:PlotView Model="{Binding CurrentPlotModel}"
-                              Height="400"
-                              Background="Transparent"/>
-            </StackPanel>
+                           Margin="0,5"/>
 
-            <!-- Loading indicator -->
-            <ProgressBar IsIndeterminate="True"
-                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                         HorizontalAlignment="Stretch"
-                         VerticalAlignment="Top"
-                         Height="5"/>
+                <TextBlock Text="{Binding CurrentCoinDetails.PriceChange24h,
+                                          StringFormat='24h: {0:F2}%'}"
+                           FontSize="16"
+                           Margin="0,5"
+                           Foreground="{Binding CurrentCoinDetails.PriceChange24h,
+                                                Converter={StaticResource PriceColorConverter}}"/>
+
+                <TextBlock Text="{Binding CurrentCoinDetails.MarketCap,
+                                          StringFormat='Market Cap: {0:N0}'}"
+                           FontSize="16"
+                           Foreground="White"
+                           Margin="0,5"/>
+
+                <TextBlock Text="{Binding CurrentCoinDetails.TotalVolume,
+                                          StringFormat='Volume: {0:N0}'}"
+                           FontSize="16"
+                           Foreground="White"
+                           Margin="0,5"/>
+
+            </StackPanel>
         </Grid>
+    </StackPanel>
+
+    <!-- Loading indicator -->
+    <ProgressBar Grid.ColumnSpan="2"
+                 IsIndeterminate="True"
+                 Visibility="{Binding IsLoading,
+                                      Converter={StaticResource BooleanToVisibilityConverter}}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Top"
+                 Height="5"/>
+</Grid>
+
     </Grid>
 </Window>
