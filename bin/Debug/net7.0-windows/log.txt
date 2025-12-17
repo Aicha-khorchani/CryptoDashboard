@@ -217,3 +217,13 @@
 [15:25:10] RATE LIMITED chart for tether
 [15:25:14] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
 [15:25:14] STATUS → TooManyRequests
+[17:30:11] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[17:30:12] STATUS → OK
+[17:30:12] JSON LENGTH → 39708
+[17:30:12] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":86412,"market_cap":1726387875547,"market_cap_rank":1,"fully_diluted_valuation":1726387875547,"total_volume":45494754515,"high_24h":90165,"low_24h":86283,"price_change_24h":-1380.4322244200594,"price_change_percentage_24h":-1.57238,"market_cap_change_24h":-28949641103.02661,"market_cap_change_percentage_24h":-1.64924,"circulating_supply":19963375.0,"total_supply":19963375.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-31.2409,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":127746.44563,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-17T16:30:02.368Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2848.84,"market_cap":343989911221,"market_cap_rank":2,"fully_dilu
+[17:30:12] Coins returned: 50
+[17:31:37] REQUEST → coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false
+[17:31:39] STATUS → OK
+[17:31:39] JSON LENGTH → 39732
+[17:31:39] First coin JSON → [{"id":"bitcoin","symbol":"btc","name":"Bitcoin","image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400","current_price":86304,"market_cap":1726387875547,"market_cap_rank":1,"fully_diluted_valuation":1726387875547,"total_volume":45672376988,"high_24h":90165,"low_24h":86283,"price_change_24h":-1488.6842796756973,"price_change_percentage_24h":-1.69569,"market_cap_change_24h":-28949641103.02661,"market_cap_change_percentage_24h":-1.64924,"circulating_supply":19963375.0,"total_supply":19963375.0,"max_supply":21000000.0,"ath":126080,"ath_change_percentage":-31.2409,"ath_date":"2025-10-06T18:57:42.558Z","atl":67.81,"atl_change_percentage":127746.44563,"atl_date":"2013-07-06T00:00:00.000Z","roi":null,"last_updated":"2025-12-17T16:30:52.178Z"},{"id":"ethereum","symbol":"eth","name":"Ethereum","image":"https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628","current_price":2844.3,"market_cap":343989911221,"market_cap_rank":2,"fully_dilut
+[17:31:39] Coins returned: 50
