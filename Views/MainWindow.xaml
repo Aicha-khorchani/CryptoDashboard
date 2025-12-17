@@ -27,32 +27,63 @@
 
 <Grid Grid.Row="1">
     <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="250"/>
+        <ColumnDefinition Width="380"/>
         <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
 
     <!-- LEFT: Coin list (scrollable) -->
-    <ScrollViewer Grid.Column="0"
-                  VerticalScrollBarVisibility="Disabled"
-                  HorizontalScrollBarVisibility="Disabled">
+<ListView Grid.Column="0"
+          ItemsSource="{Binding Coins}"
+          SelectedItem="{Binding SelectedCoin}"
+          Background="Black"
+          Foreground="White"
+          ScrollViewer.VerticalScrollBarVisibility="Auto"
+          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+          Height="Auto">
 
-        <ListView ItemsSource="{Binding Coins}"
-                  SelectedItem="{Binding SelectedCoin, Mode=TwoWay}"
-                  Background="Black"
-                  Foreground="White">
+    <ListView.View>
+        <GridView>
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock Text="{Binding Name}" Width="110" Foreground="White"/>
-                        <TextBlock Text="{Binding CurrentPrice}" Width="80" Foreground="White"/>
+            <!-- Coin Name -->
+            <GridViewColumn Header="Coin" Width="160">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   Foreground="White"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip="{Binding Name}"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
 
+            <!-- Price -->
+            <GridViewColumn Header="Price" Width="90">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding CurrentPrice}"
+                                   Foreground="White"
+                                   HorizontalAlignment="Right"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+
+            <!-- View Button -->
+            <GridViewColumn Width="60">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
                         <Button Content="View"
                                 Width="50"
                                 Command="{Binding DataContext.ShowCoinDetailsCommand,
                                           RelativeSource={RelativeSource AncestorType=ListView}}"
-                                CommandParameter="{Binding}" />
+                                CommandParameter="{Binding}"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
 
+            <!-- Star -->
+            <GridViewColumn Width="40">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
                         <Button Content="★"
                                 Width="30"
                                 Command="{Binding DataContext.ToggleFavoriteCommand,
@@ -69,12 +100,13 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
 
-        </ListView>
-    </ScrollViewer>
+        </GridView>
+    </ListView.View>
+</ListView>
 
     <!-- RIGHT: Chart + Stats -->
     <StackPanel Grid.Column="1" Margin="10">

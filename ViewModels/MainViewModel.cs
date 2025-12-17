@@ -9,6 +9,8 @@ using CryptoDashboard.Services;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using System.Threading;
+
 
 namespace CryptoDashboard.ViewModels
 {
@@ -19,10 +21,11 @@ namespace CryptoDashboard.ViewModels
         private readonly Dispatcher _dispatcher;
         private string? _lastCoinId;
         private bool _isLoadingChart;
+        private CancellationTokenSource? _chartCts;
+        private CoinViewModel? _selectedCoin;
 
         private bool _isLoading;
         private string _searchQuery = string.Empty;
-        private CoinViewModel? _selectedCoin;
         private List<string> _favoriteIds;
 
         private ObservableCollection<CoinViewModel> _allCoins = new();
@@ -125,47 +128,6 @@ ToggleChartCommand = new RelayCommand(_ =>
             }
         }
 
-        private async Task LoadCoinHistoryAsync(Coin coin)
-        {
-            if (_lastCoinId == coin.Id || _isLoadingChart) return;
-
-            _lastCoinId = coin.Id;
-            _isLoadingChart = true;
-
-            try
-            {
-                var history = await _coinService.GetMarketChartAsync(coin.Id, 7) ?? new List<PricePoint>();
-              if (!_dispatcher.HasShutdownStarted)
-              {
-                await _dispatcher.InvokeAsync(() =>
-                {
-                    MainPlotModel.Series.Clear();
-
-                    var series = new LineSeries
-                    {
-                        Title = coin.Name,
-                        StrokeThickness = 2,
-                        Color = OxyColors.SteelBlue
-                    };
-
-                    foreach (var point in history)
-                        series.Points.Add(DateTimeAxis.CreateDataPoint(point.Date, (double)point.Price));
-
-                    MainPlotModel.Series.Add(series);
-                    MainPlotModel.Title = coin.Name + " - 7 days";
-                    MainPlotModel.InvalidatePlot(true);
-
-                    // Switch CurrentPlotModel back to main
-                    CurrentPlotModel = MainPlotModel;
-                    OnPropertyChanged(nameof(CurrentPlotModel));
-                });
-              }
-            }
-            finally
-            {
-                _isLoadingChart = false;
-            }
-        }
 
         public bool IsLoading
         {
@@ -188,23 +150,57 @@ public CoinViewModel? SelectedCoin
     get => _selectedCoin;
     set
     {
-        if (SetProperty(ref _selectedCoin, value) && value != null)
+        if (!SetProperty(ref _selectedCoin, value) || value == null)
+            return;
+
+        LoadChartSafe(value.GetModel());
+    }
+}
+
+private async void LoadChartSafe(Coin coin)
+{
+    try
+    {
+        _chartCts?.Cancel();
+        _chartCts = new CancellationTokenSource();
+
+        await Task.Delay(200, _chartCts.Token); // debounce
+
+        var history = await _coinService
+            .GetMarketChartAsync(coin.Id, 7, "usd", _chartCts.Token);
+
+        if (_dispatcher.HasShutdownStarted) return;
+
+        await _dispatcher.InvokeAsync(() =>
         {
-            // Fire-and-forget async safely with logging
-            _ = Task.Run(async () =>
+            MainPlotModel.Series.Clear();
+
+            var series = new LineSeries
             {
-                try
-                {
-                    Logger.Log($"Loading history for coin: {value.Name} ({value.Id})");
-                    await LoadCoinHistoryAsync(value.GetModel());
-                    Logger.Log($"Finished loading history for coin: {value.Name}");
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log($"Error loading history for coin {value.Name}: {ex}");
-                }
-            });
-        }
+                Title = coin.Name,
+                StrokeThickness = 2,
+                Color = OxyColors.SteelBlue
+            };
+
+            foreach (var point in history)
+                series.Points.Add(DateTimeAxis.CreateDataPoint(
+                    point.Date, (double)point.Price));
+
+            MainPlotModel.Series.Add(series);
+            MainPlotModel.Title = $"{coin.Name} - 7 days";
+            MainPlotModel.InvalidatePlot(true);
+
+            CurrentPlotModel = MainPlotModel;
+            OnPropertyChanged(nameof(CurrentPlotModel));
+        });
+    }
+    catch (OperationCanceledException)
+    {
+        // expected
+    }
+    catch (Exception ex)
+    {
+        Logger.Log("Chart load failed: " + ex);
     }
 }
 

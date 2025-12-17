@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CryptoDashboard.Models;
 using CryptoDashboard.Helpers; 
+using System.Threading;
+
 
 namespace CryptoDashboard.Services
 {
@@ -50,14 +52,21 @@ Logger.Log("Coins returned: " + (coins?.Count ?? 0));
         public async Task<List<PricePoint>> GetMarketChartAsync(
             string coinId,
             int days,
-            string vsCurrency = "usd")
-        {
+            string vsCurrency = "usd",
+            CancellationToken token = default){
             var url = $"coins/{coinId}/market_chart?vs_currency={vsCurrency}&days={days}";
 
-            var response = await _httpClient.GetAsync(url);
+            var response = await _httpClient.GetAsync(url, token);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                Logger.Log("RATE LIMITED chart for " + coinId);
+                return new List<PricePoint>();
+            }
+
             response.EnsureSuccessStatusCode();
 
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync(token);
 
             using var doc = JsonDocument.Parse(json);
 
