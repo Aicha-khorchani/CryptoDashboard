@@ -2,5 +2,10 @@
   "ripple",
   "staked-ether",
   "ethereum",
-  "paypal-usd"
+  "paypal-usd",
+  "tron",
+  "solana",
+  "usd-coin",
+  "tether",
+  "wrapped-beacon-eth"
 ]

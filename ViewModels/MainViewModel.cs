@@ -23,6 +23,12 @@ namespace CryptoDashboard.ViewModels
         private bool _isLoadingChart;
         private CancellationTokenSource? _chartCts;
         private CoinViewModel? _selectedCoin;
+        private ObservableCollection<CoinViewModel> _favoriteCoins = new();
+        public ObservableCollection<CoinViewModel> FavoriteCoins
+        {
+         get => _favoriteCoins;
+         set => SetProperty(ref _favoriteCoins, value);
+        }
 
         private bool _isLoading;
         private string _searchQuery = string.Empty;
@@ -127,6 +133,15 @@ ToggleChartCommand = new RelayCommand(_ =>
                 IsLoading = false;
             }
         }
+private void UpdateFavoriteCoins()
+{
+    FavoriteCoins.Clear();
+    foreach (var coin in Coins)
+    {
+        if (coin.IsFavorite)
+            FavoriteCoins.Add(coin);
+    }
+}
 
 
         public bool IsLoading
@@ -153,12 +168,11 @@ public CoinViewModel? SelectedCoin
         if (!SetProperty(ref _selectedCoin, value) || value == null)
             return;
 
-        LoadChartSafe(value.GetModel());
+_ = LoadChartSafe(value.GetModel());
     }
 }
 
-private async void LoadChartSafe(Coin coin)
-{
+private async Task LoadChartSafe(Coin coin){
     try
     {
         _chartCts?.Cancel();
@@ -216,33 +230,40 @@ private async void LoadChartSafe(Coin coin)
                 Coins.Clear();
                 _allCoins.Clear();
 
-                foreach (var coin in coins)
-                {
-                    coin.IsFavorite = _favoriteIds.Contains(coin.Id);
-                    var vm = new CoinViewModel(coin);
-                    _allCoins.Add(vm);
-                    Coins.Add(vm);
-                }
+foreach (var coin in coins)
+{
+    coin.IsFavorite = _favoriteIds.Contains(coin.Id);
+
+    var vm = new CoinViewModel(coin);
+
+    _allCoins.Add(vm);
+    Coins.Add(vm);
+}
+
+UpdateFavoriteCoins();
+
             });
 
             IsLoading = false;
         }
+public void ToggleFavorite(CoinViewModel coinVM)
+{
+    if (coinVM == null) return;
 
-        public void ToggleFavorite(CoinViewModel coinVM)
-        {
-            if (coinVM == null) return;
+    bool wasFav = _favoriteIds.Contains(coinVM.Id);
 
-            bool wasFav = _favoriteIds.Contains(coinVM.Id);
+    if (wasFav)
+        _favoriteIds.Remove(coinVM.Id);
+    else
+        _favoriteIds.Add(coinVM.Id);
 
-            if (wasFav)
-                _favoriteIds.Remove(coinVM.Id);
-            else
-                _favoriteIds.Add(coinVM.Id);
+    coinVM.IsFavorite = !wasFav;
 
-            coinVM.IsFavorite = !wasFav;
+    _favoritesService.SaveFavorites(_favoriteIds);
 
-            _favoritesService.SaveFavorites(_favoriteIds);
-        }
+    UpdateFavoriteCoins();
+}
+
 
         private void FilterCoins()
         {
