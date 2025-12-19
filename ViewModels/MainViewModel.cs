@@ -6,6 +6,7 @@ using System.Windows.Threading;
 using CryptoDashboard.Helpers;
 using CryptoDashboard.Models;
 using CryptoDashboard.Services;
+using System.Windows.Input;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -45,6 +46,12 @@ namespace CryptoDashboard.ViewModels
         public RelayCommand ToggleFavoriteCommand { get; }
         public RelayCommand ShowCoinDetailsCommand { get; }
         public RelayCommand ToggleChartCommand { get; }
+
+public ICommand RefreshChartCommand => new RelayCommand(_ =>
+{
+    CurrentPlotModel?.InvalidatePlot(true);
+});
+
 
         private CoinDetailsViewModel? _currentCoinDetails;
         public CoinDetailsViewModel? CurrentCoinDetails
@@ -133,6 +140,20 @@ ToggleChartCommand = new RelayCommand(_ =>
                 IsLoading = false;
             }
         }
+        private bool _isChartTabSelected;
+public bool IsChartTabSelected
+{
+    get => _isChartTabSelected;
+    set
+    {
+        _isChartTabSelected = value;
+        OnPropertyChanged();
+
+        if (value)
+            CurrentPlotModel?.InvalidatePlot(true);
+    }
+}
+
 private void UpdateFavoriteCoins()
 {
     FavoriteCoins.Clear();

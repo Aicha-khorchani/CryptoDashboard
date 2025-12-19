@@ -5,55 +5,55 @@
         Title="Crypto Dashboard"
         Height="720"
         Width="1000"
-        Background="{StaticResource BackgroundBrush}"
+        Background="#1E1E1E"
         Icon="pack://application:,,,/Assets/coin.ico">
-<Window.Resources>
 
-    <!-- Modern Dark Tab Style -->
-    <Style TargetType="TabControl">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-    </Style>
+    <Window.Resources>
 
-    <Style TargetType="TabItem">
-        <Setter Property="Foreground" Value="#AAAAAA"/>
-        <Setter Property="Background" Value="#1E1E1E"/>
-        <Setter Property="Padding" Value="16,8"/>
-        <Setter Property="Margin" Value="0,0,6,0"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Cursor" Value="Hand"/>
+        <!-- BooleanToVisibilityConverter -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="TabItem">
-                    <Border x:Name="Border"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="8,8,0,0">
-                        <ContentPresenter
-                            ContentSource="Header"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"/>
-                    </Border>
+        <!-- Tab styles -->
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
 
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border"
-                                    Property="Background"
-                                    Value="#2A2A2A"/>
-                            <Setter Property="Foreground" Value="White"/>
-                        </Trigger>
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="#AAAAAA"/>
+            <Setter Property="Background" Value="#2A2A2A"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="#444"
+                                BorderThickness="1">
+                            <ContentPresenter
+                                ContentSource="Header"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#1E1E1E"/>
+                                <Setter Property="Foreground" Value="Gold"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="White"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-</Window.Resources>
+    </Window.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -64,235 +64,284 @@
         <!-- Top bar: search + refresh -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
             <TextBox Width="250"
+                     Height="32"
                      Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                     Margin="0,0,10,0"/>
+                     Margin="0,0,10,0"
+                     Padding="6"
+                     Background="#2A2A2A"
+                     Foreground="White"
+                     BorderBrush="#444"
+                     BorderThickness="1"
+                     VerticalContentAlignment="Center"/>
             <Button Content="Refresh"
                     Command="{Binding RefreshCommand}"
                     Width="120"
-                    Height="35"/>
+                    Height="32"
+                    Background="#333"
+                    Foreground="White"
+                    BorderBrush="#555"
+                    BorderThickness="1"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"
+                    FontWeight="Bold"/>
         </StackPanel>
 
-<Grid Grid.Row="1">
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="380"/>
-        <ColumnDefinition Width="*"/>
-    </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-    <!-- LEFT: Coin list (scrollable) -->
-<ListView Grid.Column="0"
-          ItemsSource="{Binding Coins}"
-          SelectedItem="{Binding SelectedCoin}"
-          Background="Black"
-          Foreground="White"
-          ScrollViewer.VerticalScrollBarVisibility="Auto"
-          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-          Height="Auto">
+            <!-- LEFT: Coin list (scrollable) -->
+            <ListView Grid.Column="0"
+                      ItemsSource="{Binding Coins}"
+                      SelectedItem="{Binding SelectedCoin}"
+                      Background="#1E1E1E"
+                      Foreground="White"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      Height="Auto"
+                      BorderBrush="#333"
+                      BorderThickness="1"
+                      Margin="0,0,8,0">
+                <ListView.View>
+                    <GridView>
 
-    <ListView.View>
-        <GridView>
-
-            <!-- Coin Name -->
-            <GridViewColumn Header="Coin" Width="160">
-                <GridViewColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"
-                                   Foreground="White"
-                                   TextTrimming="CharacterEllipsis"
-                                   ToolTip="{Binding Name}"/>
-                    </DataTemplate>
-                </GridViewColumn.CellTemplate>
-            </GridViewColumn>
-
-            <!-- Price -->
-            <GridViewColumn Header="Price" Width="90">
-                <GridViewColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding CurrentPrice}"
-                                   Foreground="White"
-                                   HorizontalAlignment="Right"/>
-                    </DataTemplate>
-                </GridViewColumn.CellTemplate>
-            </GridViewColumn>
-
-            <!-- View Button -->
-            <GridViewColumn Width="60">
-                <GridViewColumn.CellTemplate>
-                    <DataTemplate>
-                        <Button Content="View"
-                                Width="50"
-                                Command="{Binding DataContext.ShowCoinDetailsCommand,
-                                          RelativeSource={RelativeSource AncestorType=ListView}}"
-                                CommandParameter="{Binding}"/>
-                    </DataTemplate>
-                </GridViewColumn.CellTemplate>
-            </GridViewColumn>
-
-            <!-- Star -->
-            <GridViewColumn Width="40">
-                <GridViewColumn.CellTemplate>
-                    <DataTemplate>
-                        <Button Content="★"
-                                Width="30"
-                                Command="{Binding DataContext.ToggleFavoriteCommand,
-                                          RelativeSource={RelativeSource AncestorType=ListView}}"
-                                CommandParameter="{Binding}">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Foreground" Value="Gray"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsFavorite}" Value="True">
-                                            <Setter Property="Foreground" Value="Gold"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </DataTemplate>
-                </GridViewColumn.CellTemplate>
-            </GridViewColumn>
-
-        </GridView>
-    </ListView.View>
-</ListView>
-
-    <!-- RIGHT: Chart + Stats + fav part -->
-<Grid Grid.Column="1" Margin="10">
-
-    <TabControl Background="Transparent"
-                BorderThickness="0">
-
-        <!-- ===================== -->
-        <!-- TAB 1: FAVORITES -->
-        <!-- ===================== -->
-        <TabItem Header="★ Favorites">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding FavoriteCoins}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="220"
-                                    Height="110"
-                                    Margin="6"
-                                    Padding="10"
-                                    Background="#1E1E1E"
-                                    CornerRadius="10"
-                                    BorderBrush="#333"
-                                    BorderThickness="1">
-
-                                <StackPanel>
+                        <!-- Coin Name -->
+                        <GridViewColumn Header="Coin" Width="160">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
                                     <TextBlock Text="{Binding Name}"
                                                Foreground="White"
-                                               FontWeight="Bold"
-                                               FontSize="14"
-                                               TextTrimming="CharacterEllipsis"/>
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding Name}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                                    <TextBlock Text="{Binding CurrentPrice,
-                                              StringFormat='Price: {0:C}'}"
-                                               Foreground="LightGreen"
-                                               Margin="0,6,0,0"/>
+                        <!-- Price -->
+                        <GridViewColumn Header="Price" Width="90">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding CurrentPrice}"
+                                               Foreground="White"
+                                               HorizontalAlignment="Right"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
+                        <!-- View Button -->
+                        <GridViewColumn Width="60">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
                                     <Button Content="View"
-                                            Width="70"
-                                            Margin="0,8,0,0"
+                                            Width="50"
+                                            Height="24"
+                                            Background="#444"
+                                            Foreground="White"
+                                            BorderBrush="#666"
+                                            BorderThickness="1"
+                                            Cursor="Hand"
                                             Command="{Binding DataContext.ShowCoinDetailsCommand,
-                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                                      RelativeSource={RelativeSource AncestorType=ListView}}"
                                             CommandParameter="{Binding}"/>
-                                </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </TabItem>
+                        <!-- Star -->
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="★"
+                                            Width="30"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Command="{Binding DataContext.ToggleFavoriteCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ListView}}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Foreground" Value="Gray"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                                        <Setter Property="Foreground" Value="Gold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
-        <!-- ===================== -->
-        <!-- TAB 2: CHART + DETAILS -->
-        <!-- ===================== -->
-        <TabItem Header="📈 Chart and Details">
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <!-- RIGHT: Chart + Stats + Favorites cards -->
+            <TabControl Grid.Column="1" Background="Transparent" BorderThickness="0">
 
-                <!-- Toggle -->
-                <Button Content="Toggle Chart"
-                        Width="120"
-                        Margin="0,0,0,10"
-                        Command="{Binding ToggleChartCommand}"/>
+                <!-- FAVORITES CARDS TAB -->
+                <TabItem Header="★ Favorites">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding FavoriteCoins}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="240"
+                                            Height="120"
+                                            Margin="8"
+                                            Padding="10"
+                                            Background="#2A2A2A"
+                                            BorderBrush="#333"
+                                            BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="48"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
 
-                <!-- Chart + Stats -->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
+                                            <!-- Coin image -->
+                                            <Image Grid.Column="0"
+                                                   Width="40"
+                                                   Height="40"
+                                                   Margin="0,4,8,0"
+                                                   Source="{Binding ImageUrl}"
+                                                   Stretch="Uniform"/>
 
-                    <!-- Chart -->
-                    <oxy:PlotView Grid.Column="0"
-                                  Model="{Binding CurrentPlotModel}"
-                                  Background="Transparent"/>
+                                            <!-- Info -->
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="White"
+                                                           FontWeight="Bold"
+                                                           FontSize="14"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding CurrentPrice,
+                                                           StringFormat='Price: {0:C}'}"
+                                                           Foreground="LightGreen"
+                                                           FontSize="13"
+                                                           Margin="0,4,0,0"/>
+                                                <Button Content="View"
+                                                        Width="60"
+                                                        Height="24"
+                                                        Margin="0,6,0,0"
+                                                        Background="#444"
+                                                        Foreground="White"
+                                                        BorderBrush="#666"
+                                                        BorderThickness="1"
+                                                        Cursor="Hand"
+                                                        Command="{Binding DataContext.ShowCoinDetailsCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
 
-                    <!-- Stats -->
-                    <StackPanel Grid.Column="1"
-                                Margin="20,0,0,0"
-                                Visibility="{Binding CurrentCoinDetails,
-                                    Converter={StaticResource NullToVisibilityConverter}}">
+                                            <!-- Remove favorite -->
+                                            <Button Grid.Column="2"
+                                                    Content="✕"
+                                                    Width="26"
+                                                    Height="26"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Foreground="Red"
+                                                    Cursor="Hand"
+                                                    ToolTip="Remove from favorites"
+                                                    Command="{Binding DataContext.ToggleFavoriteCommand,
+                                                              RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem>
 
-                        <TextBlock Text="{Binding CurrentCoinDetails.Name}"
-                                   FontSize="18"
-                                   Foreground="White"
-                                   Margin="0,0,0,10"/>
+                <!-- CHART + DETAILS TAB -->
+                <TabItem Header="📈 Chart and Details"
+                         IsSelected="{Binding IsChartTabSelected, Mode=TwoWay}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding CurrentCoinDetails.CurrentPrice,
-                                    StringFormat='Price: {0:C}'}"
-                                   Foreground="White"
-                                   FontSize="16"
-                                   Margin="0,5"/>
+                        <!-- Toggle Chart Button -->
+                        <Button Content="Toggle Chart"
+                                Width="120"
+                                Height="28"
+                                Margin="0,0,0,10"
+                                Background="#444"
+                                Foreground="White"
+                                BorderBrush="#666"
+                                BorderThickness="1"
+                                Cursor="Hand"
+                                Command="{Binding ToggleChartCommand}"/>
 
-                        <TextBlock Text="{Binding CurrentCoinDetails.PriceChange24h,
-                                    StringFormat='24h: {0:F2}%'}"
-                                   FontSize="16"
-                                   Margin="0,5"
-                                   Foreground="{Binding CurrentCoinDetails.PriceChange24h,
-                                    Converter={StaticResource PriceColorConverter}}"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{Binding CurrentCoinDetails.MarketCap,
-                                    StringFormat='Market Cap: {0:N0}'}"
-                                   FontSize="16"
-                                   Foreground="White"
-                                   Margin="0,5"/>
+                            <!-- Chart -->
+                            <oxy:PlotView Grid.Column="0"
+                                          Model="{Binding CurrentPlotModel}"
+                                          Background="Transparent"
+                                          IsHitTestVisible="True"/>
 
-                        <TextBlock Text="{Binding CurrentCoinDetails.TotalVolume,
-                                    StringFormat='Volume: {0:N0}'}"
-                                   FontSize="16"
-                                   Foreground="White"
-                                   Margin="0,5"/>
-                    </StackPanel>
+                            <!-- Stats -->
+                            <StackPanel Grid.Column="1"
+                                        Margin="20,0,0,0"
+                                        Visibility="{Binding CurrentCoinDetails,
+                                            Converter={StaticResource NullToVisibilityConverter}}">
+                                <TextBlock Text="{Binding CurrentCoinDetails.Name}"
+                                           FontSize="18"
+                                           Foreground="White"
+                                           Margin="0,0,0,10"/>
+                                <TextBlock Text="{Binding CurrentCoinDetails.CurrentPrice,
+                                            StringFormat='Price: {0:C}'}"
+                                           Foreground="White"
+                                           FontSize="16"
+                                           Margin="0,5"/>
+                                <TextBlock Text="{Binding CurrentCoinDetails.PriceChange24h,
+                                            StringFormat='24h: {0:F2}%'}"
+                                           FontSize="16"
+                                           Margin="0,5"
+                                           Foreground="{Binding CurrentCoinDetails.PriceChange24h,
+                                            Converter={StaticResource PriceColorConverter}}"/>
+                                <TextBlock Text="{Binding CurrentCoinDetails.MarketCap,
+                                            StringFormat='Market Cap: {0:N0}'}"
+                                           FontSize="16"
+                                           Foreground="White"
+                                           Margin="0,5"/>
+                                <TextBlock Text="{Binding CurrentCoinDetails.TotalVolume,
+                                            StringFormat='Volume: {0:N0}'}"
+                                           FontSize="16"
+                                           Foreground="White"
+                                           Margin="0,5"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </TabItem>
 
-                </Grid>
-            </Grid>
-        </TabItem>
+            </TabControl>
 
-    </TabControl>
-</Grid>
+        </Grid>
 
-    <!-- Loading indicator -->
-    <ProgressBar Grid.ColumnSpan="2"
-                 IsIndeterminate="True"
-                 Visibility="{Binding IsLoading,
-                                      Converter={StaticResource BooleanToVisibilityConverter}}"
-                 HorizontalAlignment="Stretch"
-                 VerticalAlignment="Top"
-                 Height="5"/>
-</Grid>
-
+        <!-- Loading indicator -->
+        <ProgressBar Grid.ColumnSpan="2"
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsLoading,
+                                          Converter={StaticResource BooleanToVisibilityConverter}}"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Top"
+                     Height="5"
+                     Foreground="Gold"/>
     </Grid>
 </Window>

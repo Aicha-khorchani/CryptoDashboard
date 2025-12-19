@@ -15,6 +15,7 @@ namespace CryptoDashboard.ViewModels
         public string Name => _coin.Name;
         public decimal CurrentPrice => _coin.CurrentPrice;
         public string Id => _coin.Id;
+        public string ImageUrl => _coin.ImageUrl;
 
         private bool _isFavorite;
         public bool IsFavorite
