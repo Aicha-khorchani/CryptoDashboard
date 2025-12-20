@@ -134,6 +134,8 @@ ToggleChartCommand = new RelayCommand(_ =>
                 // Switch CurrentPlotModel to coin detail
                 CurrentPlotModel = CurrentCoinDetails.PlotModel;
                 OnPropertyChanged(nameof(CurrentPlotModel));
+                IsChartTabSelected = true;
+
             }
             finally
             {
