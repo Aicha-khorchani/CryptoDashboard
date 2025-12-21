@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CryptoDashboard.Services;
+using System.Threading;
+using System.Windows.Input;
+
 
 
 namespace CryptoDashboard.ViewModels
@@ -15,6 +18,9 @@ namespace CryptoDashboard.ViewModels
     {
         private readonly CoinGeckoService _coinService;
        private CancellationTokenSource? _historyCts;
+       private int _currentDays = 30;
+       public ICommand ChangeDaysCommand { get; }
+
 
         public CoinDetailsViewModel(Coin coin)
         {
@@ -43,6 +49,17 @@ namespace CryptoDashboard.ViewModels
                 TicklineColor = OxyColors.White,
                 AxislineColor = OxyColors.White
             });
+            
+    ChangeDaysCommand = new RelayCommand(async param =>
+    {
+        if (param == null) return;
+
+        if (int.TryParse(param.ToString(), out int days))
+        {
+            _currentDays = days;
+            await LoadHistoryAsync(days);
+        }
+    });
         }
 
         public Coin Coin { get; }

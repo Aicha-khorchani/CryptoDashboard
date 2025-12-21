@@ -1,0 +1,22 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Runtime / local data
+favorites.json
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

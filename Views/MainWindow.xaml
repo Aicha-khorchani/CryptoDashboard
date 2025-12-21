@@ -337,16 +337,46 @@
                         </Grid.RowDefinitions>
 
                         <!-- Toggle Chart Button -->
-                        <Button Content="Toggle Chart"
-                                Width="120"
-                                Height="28"
-                                Margin="0,0,0,10"
-                                Background="#444"
-                                Foreground="White"
-                                BorderBrush="#666"
-                                BorderThickness="1"
-                                Cursor="Hand"
-                                Command="{Binding ToggleChartCommand}"/>
+<!-- Chart Range Buttons -->
+<StackPanel Orientation="Horizontal"
+            Margin="0,0,0,10">
+
+    <Button Content="7 D"
+            Width="60"
+            Height="28"
+            Margin="0,0,6,0"
+            Background="#444"
+            Foreground="White"
+            BorderBrush="#666"
+            BorderThickness="1"
+            Cursor="Hand"
+            Command="{Binding CurrentCoinDetails.ChangeDaysCommand}"
+            CommandParameter="7"/>
+
+    <Button Content="30 D"
+            Width="60"
+            Height="28"
+            Margin="0,0,6,0"
+            Background="#444"
+            Foreground="White"
+            BorderBrush="#666"
+            BorderThickness="1"
+            Cursor="Hand"
+            Command="{Binding CurrentCoinDetails.ChangeDaysCommand}"
+            CommandParameter="30"/>
+
+    <Button Content="90 D"
+            Width="60"
+            Height="28"
+            Background="#444"
+            Foreground="White"
+            BorderBrush="#666"
+            BorderThickness="1"
+            Cursor="Hand"
+            Command="{Binding CurrentCoinDetails.ChangeDaysCommand}"
+            CommandParameter="90"/>
+</StackPanel>
+
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
