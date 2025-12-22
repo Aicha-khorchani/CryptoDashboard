@@ -16,6 +16,19 @@ namespace CryptoDashboard.ViewModels
         public decimal CurrentPrice => _coin.CurrentPrice;
         public string Id => _coin.Id;
         public string ImageUrl => _coin.ImageUrl;
+private decimal? _alertPrice;
+public decimal? AlertPrice
+{
+    get => _alertPrice;
+    set => SetProperty(ref _alertPrice, value);
+}
+
+private bool _alertTriggered;
+public bool AlertTriggered
+{
+    get => _alertTriggered;
+    set => SetProperty(ref _alertTriggered, value);
+}
 
         private bool _isFavorite;
         public bool IsFavorite

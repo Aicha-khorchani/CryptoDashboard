@@ -7,6 +7,8 @@ using CryptoDashboard.Helpers;
 using CryptoDashboard.Models;
 using CryptoDashboard.Services;
 using System.Windows.Input;
+using System.Windows;
+
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -142,6 +144,43 @@ ToggleChartCommand = new RelayCommand(_ =>
                 IsLoading = false;
             }
         }
+        public List<string> FavoriteSortModes { get; } = new() { "Name", "Price ▲", "Price ▼", "24h ▲", "24h ▼" };
+
+private string _favoriteSortMode;
+public string FavoriteSortMode
+{
+    get => _favoriteSortMode;
+    set
+    {
+        if (SetProperty(ref _favoriteSortMode, value))
+            ApplyFavoriteSort();
+    }
+}
+
+private void ApplyFavoriteSort()
+{
+    IEnumerable<CoinViewModel> sorted = FavoriteCoins;
+    switch (FavoriteSortMode)
+    {
+        case "Name":
+            sorted = FavoriteCoins.OrderBy(x => x.Name);
+            break;
+        case "Price ▲":
+            sorted = FavoriteCoins.OrderBy(x => x.CurrentPrice);
+            break;
+        case "Price ▼":
+            sorted = FavoriteCoins.OrderByDescending(x => x.CurrentPrice);
+            break;
+        case "24h ▲":
+            sorted = FavoriteCoins.OrderBy(x => x.GetModel().PriceChangePercentage24h);
+            break;
+        case "24h ▼":
+            sorted = FavoriteCoins.OrderByDescending(x => x.GetModel().PriceChangePercentage24h);
+            break;
+    }
+    FavoriteCoins = new ObservableCollection<CoinViewModel>(sorted);
+}
+
         private bool _isChartTabSelected;
 public bool IsChartTabSelected
 {
@@ -192,6 +231,7 @@ public CoinViewModel? SelectedCoin
             return;
 
 _ = LoadChartSafe(value.GetModel());
+      CheckPriceAlerts();
     }
 }
 
@@ -241,6 +281,26 @@ private async Task LoadChartSafe(Coin coin){
     }
 }
 
+private void CheckPriceAlerts()
+{
+    foreach (var coin in Coins)
+    {
+        if (coin.AlertPrice == null || coin.AlertTriggered)
+            continue;
+
+        if (coin.CurrentPrice >= coin.AlertPrice)
+        {
+            coin.AlertTriggered = true;
+
+            MessageBox.Show(
+                $"{coin.Name} reached {coin.CurrentPrice:C}\nTarget was {coin.AlertPrice:C}",
+                "Price Alert 🚨",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+    }
+}
 
         public async Task LoadCoinsAsync()
         {
@@ -264,7 +324,7 @@ foreach (var coin in coins)
 }
 
 UpdateFavoriteCoins();
-
+        CheckPriceAlerts();
             });
 
             IsLoading = false;

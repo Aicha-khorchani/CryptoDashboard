@@ -8,6 +8,8 @@ namespace CryptoDashboard.Models
         public string Id { get; set; } = string.Empty;
         public string Symbol { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public decimal? AlertPrice { get; set; }
+        public bool AlertTriggered { get; set; }
 
         [JsonPropertyName("current_price")]
         public decimal CurrentPrice { get; set; }
