@@ -1,6 +1,6 @@
 # CryptoDashboard
 CryptoDashboard is a **desktop application** built with **WPF (.NET)** that allows users to track cryptocurrencies in real-time. It provides features such as price monitoring, favorite coins, 30-day charts with moving averages, volume, and alerts. The app is designed with a **MVVM architecture**, ensuring clean separation between UI, logic, and data management.
-
+API Provider: CoinGecko API
 -------------------------------------------------------------------------------
 ## Screenshots
 ### Main Window
