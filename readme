@@ -4,17 +4,13 @@ CryptoDashboard is a **desktop application** built with **WPF (.NET)** that allo
 -------------------------------------------------------------------------------
 ## Screenshots
 ### Main Window
-<img src="Screenshots/main.png" width="400">
-
+![Main Window](Screenshots/main.png)
 ### Search
-<img src="Screenshots/search.png" width="400">
-
+![Search](Screenshots/search.png)
 ### 30 day chart
-<img src="Screenshots/30-day-chart.png" width="400">
-
+![30 Day Chart](Screenshots/30-day-chart.png)
 ### 7 day chart
-<img src="Screenshots/7-day-chart.png" width="400">
-
+![7 Day Chart](Screenshots/7-day-chart.png)
 ## Features
 
 - Display a list of cryptocurrencies with current prices.
