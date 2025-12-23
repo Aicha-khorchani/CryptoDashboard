@@ -10,11 +10,17 @@
     <Color x:Key="NegativeRed">#F44336</Color>
 
     <!-- Brushes -->
-    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
-    <SolidColorBrush x:Key="CardBrush" Color="{StaticResource CardColor}" />
-    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryText}" />
-    <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryText}" />
-    <SolidColorBrush x:Key="PositiveBrush" Color="{StaticResource PositiveGreen}" />
-    <SolidColorBrush x:Key="NegativeBrush" Color="{StaticResource NegativeRed}" />
+    <SolidColorBrush x:Key="BackgroundBrush"
+            Color="{StaticResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="CardBrush"
+            Color="{StaticResource CardColor}"/>
+    <SolidColorBrush x:Key="PrimaryTextBrush"
+            Color="{StaticResource PrimaryText}"/>
+    <SolidColorBrush x:Key="SecondaryTextBrush"
+            Color="{StaticResource SecondaryText}"/>
+    <SolidColorBrush x:Key="PositiveBrush"
+            Color="{StaticResource PositiveGreen}"/>
+    <SolidColorBrush x:Key="NegativeBrush"
+            Color="{StaticResource NegativeRed}"/>
 
 </ResourceDictionary>

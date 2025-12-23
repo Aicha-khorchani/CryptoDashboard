@@ -21,38 +21,35 @@ namespace CryptoDashboard.Views
                 await vm.LoadCoinsAsync();
             };
         }
-        
 
-private void Close_Click(object sender, RoutedEventArgs e)
-{
-    Close();
-}
 
-private void Minimize_Click(object sender, RoutedEventArgs e)
-{
-    WindowState = WindowState.Minimized;
-}
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
 
-private void Maximize_Click(object sender, RoutedEventArgs e)
-{
-    WindowState = WindowState == WindowState.Maximized
-        ? WindowState.Normal
-        : WindowState.Maximized;
-}
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
 
-private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-{
-    if (e.ClickCount == 2)
-    {
-        Maximize_Click(sender, e);
+        private void Maximize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                Maximize_Click(sender, e);
+            }
+            else
+            {
+                DragMove();
+            }
+        }
     }
-    else
-    {
-        DragMove();
-    }
-}
-
-    }
-    
-
 }

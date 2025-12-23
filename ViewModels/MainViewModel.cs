@@ -29,8 +29,8 @@ namespace CryptoDashboard.ViewModels
         private ObservableCollection<CoinViewModel> _favoriteCoins = new();
         public ObservableCollection<CoinViewModel> FavoriteCoins
         {
-         get => _favoriteCoins;
-         set => SetProperty(ref _favoriteCoins, value);
+            get => _favoriteCoins;
+            set => SetProperty(ref _favoriteCoins, value);
         }
 
         private bool _isLoading;
@@ -49,10 +49,10 @@ namespace CryptoDashboard.ViewModels
         public RelayCommand ShowCoinDetailsCommand { get; }
         public RelayCommand ToggleChartCommand { get; }
 
-public ICommand RefreshChartCommand => new RelayCommand(_ =>
-{
-    CurrentPlotModel?.InvalidatePlot(true);
-});
+        public ICommand RefreshChartCommand => new RelayCommand(_ =>
+        {
+            CurrentPlotModel?.InvalidatePlot(true);
+        });
 
 
         private CoinDetailsViewModel? _currentCoinDetails;
@@ -106,15 +106,15 @@ public ICommand RefreshChartCommand => new RelayCommand(_ =>
                 AxislineColor = OxyColors.White
             });
 
-ToggleChartCommand = new RelayCommand(_ =>
-{
-    if (CurrentPlotModel == MainPlotModel && CurrentCoinDetails != null)
-        CurrentPlotModel = CurrentCoinDetails.PlotModel;
-    else
-        CurrentPlotModel = MainPlotModel;
+            ToggleChartCommand = new RelayCommand(_ =>
+            {
+                if (CurrentPlotModel == MainPlotModel && CurrentCoinDetails != null)
+                    CurrentPlotModel = CurrentCoinDetails.PlotModel;
+                else
+                    CurrentPlotModel = MainPlotModel;
 
-    OnPropertyChanged(nameof(CurrentPlotModel));
-});
+                OnPropertyChanged(nameof(CurrentPlotModel));
+            });
 
 
             // Initially bind to main chart
@@ -146,64 +146,64 @@ ToggleChartCommand = new RelayCommand(_ =>
         }
         public List<string> FavoriteSortModes { get; } = new() { "Name", "Price ▲", "Price ▼", "24h ▲", "24h ▼" };
 
-private string _favoriteSortMode;
-public string FavoriteSortMode
-{
-    get => _favoriteSortMode;
-    set
-    {
-        if (SetProperty(ref _favoriteSortMode, value))
-            ApplyFavoriteSort();
-    }
-}
+        private string _favoriteSortMode;
+        public string FavoriteSortMode
+        {
+            get => _favoriteSortMode;
+            set
+            {
+                if (SetProperty(ref _favoriteSortMode, value))
+                    ApplyFavoriteSort();
+            }
+        }
 
-private void ApplyFavoriteSort()
-{
-    IEnumerable<CoinViewModel> sorted = FavoriteCoins;
-    switch (FavoriteSortMode)
-    {
-        case "Name":
-            sorted = FavoriteCoins.OrderBy(x => x.Name);
-            break;
-        case "Price ▲":
-            sorted = FavoriteCoins.OrderBy(x => x.CurrentPrice);
-            break;
-        case "Price ▼":
-            sorted = FavoriteCoins.OrderByDescending(x => x.CurrentPrice);
-            break;
-        case "24h ▲":
-            sorted = FavoriteCoins.OrderBy(x => x.GetModel().PriceChangePercentage24h);
-            break;
-        case "24h ▼":
-            sorted = FavoriteCoins.OrderByDescending(x => x.GetModel().PriceChangePercentage24h);
-            break;
-    }
-    FavoriteCoins = new ObservableCollection<CoinViewModel>(sorted);
-}
+        private void ApplyFavoriteSort()
+        {
+            IEnumerable<CoinViewModel> sorted = FavoriteCoins;
+            switch (FavoriteSortMode)
+            {
+                case "Name":
+                    sorted = FavoriteCoins.OrderBy(x => x.Name);
+                    break;
+                case "Price ▲":
+                    sorted = FavoriteCoins.OrderBy(x => x.CurrentPrice);
+                    break;
+                case "Price ▼":
+                    sorted = FavoriteCoins.OrderByDescending(x => x.CurrentPrice);
+                    break;
+                case "24h ▲":
+                    sorted = FavoriteCoins.OrderBy(x => x.GetModel().PriceChangePercentage24h);
+                    break;
+                case "24h ▼":
+                    sorted = FavoriteCoins.OrderByDescending(x => x.GetModel().PriceChangePercentage24h);
+                    break;
+            }
+            FavoriteCoins = new ObservableCollection<CoinViewModel>(sorted);
+        }
 
         private bool _isChartTabSelected;
-public bool IsChartTabSelected
-{
-    get => _isChartTabSelected;
-    set
-    {
-        _isChartTabSelected = value;
-        OnPropertyChanged();
+        public bool IsChartTabSelected
+        {
+            get => _isChartTabSelected;
+            set
+            {
+                _isChartTabSelected = value;
+                OnPropertyChanged();
 
-        if (value)
-            CurrentPlotModel?.InvalidatePlot(true);
-    }
-}
+                if (value)
+                    CurrentPlotModel?.InvalidatePlot(true);
+            }
+        }
 
-private void UpdateFavoriteCoins()
-{
-    FavoriteCoins.Clear();
-    foreach (var coin in Coins)
-    {
-        if (coin.IsFavorite)
-            FavoriteCoins.Add(coin);
-    }
-}
+        private void UpdateFavoriteCoins()
+        {
+            FavoriteCoins.Clear();
+            foreach (var coin in Coins)
+            {
+                if (coin.IsFavorite)
+                    FavoriteCoins.Add(coin);
+            }
+        }
 
 
         public bool IsLoading
@@ -222,85 +222,86 @@ private void UpdateFavoriteCoins()
             }
         }
 
-public CoinViewModel? SelectedCoin
-{
-    get => _selectedCoin;
-    set
-    {
-        if (!SetProperty(ref _selectedCoin, value) || value == null)
-            return;
-
-_ = LoadChartSafe(value.GetModel());
-      CheckPriceAlerts();
-    }
-}
-
-private async Task LoadChartSafe(Coin coin){
-    try
-    {
-        _chartCts?.Cancel();
-        _chartCts = new CancellationTokenSource();
-
-        await Task.Delay(200, _chartCts.Token); // debounce
-
-        var history = await _coinService
-            .GetMarketChartAsync(coin.Id, 7, "usd", _chartCts.Token);
-
-        if (_dispatcher.HasShutdownStarted) return;
-
-        await _dispatcher.InvokeAsync(() =>
+        public CoinViewModel? SelectedCoin
         {
-            MainPlotModel.Series.Clear();
-
-            var series = new LineSeries
+            get => _selectedCoin;
+            set
             {
-                Title = coin.Name,
-                StrokeThickness = 2,
-                Color = OxyColors.SteelBlue
-            };
+                if (!SetProperty(ref _selectedCoin, value) || value == null)
+                    return;
 
-            foreach (var point in history)
-                series.Points.Add(DateTimeAxis.CreateDataPoint(
-                    point.Date, (double)point.Price));
-
-            MainPlotModel.Series.Add(series);
-            MainPlotModel.Title = $"{coin.Name} - 7 days";
-            MainPlotModel.InvalidatePlot(true);
-
-            CurrentPlotModel = MainPlotModel;
-            OnPropertyChanged(nameof(CurrentPlotModel));
-        });
-    }
-    catch (OperationCanceledException)
-    {
-        // expected
-    }
-    catch (Exception ex)
-    {
-        Logger.Log("Chart load failed: " + ex);
-    }
-}
-
-private void CheckPriceAlerts()
-{
-    foreach (var coin in Coins)
-    {
-        if (coin.AlertPrice == null || coin.AlertTriggered)
-            continue;
-
-        if (coin.CurrentPrice >= coin.AlertPrice)
-        {
-            coin.AlertTriggered = true;
-
-            MessageBox.Show(
-                $"{coin.Name} reached {coin.CurrentPrice:C}\nTarget was {coin.AlertPrice:C}",
-                "Price Alert 🚨",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
+                _ = LoadChartSafe(value.GetModel());
+                CheckPriceAlerts();
+            }
         }
-    }
-}
+
+        private async Task LoadChartSafe(Coin coin)
+        {
+            try
+            {
+                _chartCts?.Cancel();
+                _chartCts = new CancellationTokenSource();
+
+                await Task.Delay(200, _chartCts.Token); // debounce
+
+                var history = await _coinService
+                    .GetMarketChartAsync(coin.Id, 7, "usd", _chartCts.Token);
+
+                if (_dispatcher.HasShutdownStarted) return;
+
+                await _dispatcher.InvokeAsync(() =>
+                {
+                    MainPlotModel.Series.Clear();
+
+                    var series = new LineSeries
+                    {
+                        Title = coin.Name,
+                        StrokeThickness = 2,
+                        Color = OxyColors.SteelBlue
+                    };
+
+                    foreach (var point in history)
+                        series.Points.Add(DateTimeAxis.CreateDataPoint(
+                            point.Date, (double)point.Price));
+
+                    MainPlotModel.Series.Add(series);
+                    MainPlotModel.Title = $"{coin.Name} - 7 days";
+                    MainPlotModel.InvalidatePlot(true);
+
+                    CurrentPlotModel = MainPlotModel;
+                    OnPropertyChanged(nameof(CurrentPlotModel));
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                // expected
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Chart load failed: " + ex);
+            }
+        }
+
+        private void CheckPriceAlerts()
+        {
+            foreach (var coin in Coins)
+            {
+                if (coin.AlertPrice == null || coin.AlertTriggered)
+                    continue;
+
+                if (coin.CurrentPrice >= coin.AlertPrice)
+                {
+                    coin.AlertTriggered = true;
+
+                    MessageBox.Show(
+                        $"{coin.Name} reached {coin.CurrentPrice:C}\nTarget was {coin.AlertPrice:C}",
+                        "Price Alert 🚨",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+            }
+        }
 
         public async Task LoadCoinsAsync()
         {
@@ -313,39 +314,39 @@ private void CheckPriceAlerts()
                 Coins.Clear();
                 _allCoins.Clear();
 
-foreach (var coin in coins)
-{
-    coin.IsFavorite = _favoriteIds.Contains(coin.Id);
+                foreach (var coin in coins)
+                {
+                    coin.IsFavorite = _favoriteIds.Contains(coin.Id);
 
-    var vm = new CoinViewModel(coin);
+                    var vm = new CoinViewModel(coin);
 
-    _allCoins.Add(vm);
-    Coins.Add(vm);
-}
+                    _allCoins.Add(vm);
+                    Coins.Add(vm);
+                }
 
-UpdateFavoriteCoins();
-        CheckPriceAlerts();
+                UpdateFavoriteCoins();
+                CheckPriceAlerts();
             });
 
             IsLoading = false;
         }
-public void ToggleFavorite(CoinViewModel coinVM)
-{
-    if (coinVM == null) return;
+        public void ToggleFavorite(CoinViewModel coinVM)
+        {
+            if (coinVM == null) return;
 
-    bool wasFav = _favoriteIds.Contains(coinVM.Id);
+            bool wasFav = _favoriteIds.Contains(coinVM.Id);
 
-    if (wasFav)
-        _favoriteIds.Remove(coinVM.Id);
-    else
-        _favoriteIds.Add(coinVM.Id);
+            if (wasFav)
+                _favoriteIds.Remove(coinVM.Id);
+            else
+                _favoriteIds.Add(coinVM.Id);
 
-    coinVM.IsFavorite = !wasFav;
+            coinVM.IsFavorite = !wasFav;
 
-    _favoritesService.SaveFavorites(_favoriteIds);
+            _favoritesService.SaveFavorites(_favoriteIds);
 
-    UpdateFavoriteCoins();
-}
+            UpdateFavoriteCoins();
+        }
 
 
         private void FilterCoins()

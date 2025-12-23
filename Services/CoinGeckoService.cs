@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CryptoDashboard.Models;
-using CryptoDashboard.Helpers; 
+using CryptoDashboard.Helpers;
 using System.Threading;
 
 
@@ -18,10 +18,12 @@ namespace CryptoDashboard.Services
         {
             BaseAddress = new Uri("https://api.coingecko.com/api/v3/")
         };
-            static CoinGeckoService()
-            {
+        private static bool _rateLimitToastShown = false;
+
+        static CoinGeckoService()
+        {
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("CryptoDashboardApp/1.0");
-            }
+        }
         public async Task<List<Coin>> GetMarketCoinsAsync(string vsCurrency = "usd")
         {
             var url =
@@ -44,7 +46,7 @@ namespace CryptoDashboard.Services
             };
 
             var coins = JsonSerializer.Deserialize<List<Coin>>(json, options);
-Logger.Log("Coins returned: " + (coins?.Count ?? 0));
+            Logger.Log("Coins returned: " + (coins?.Count ?? 0));
 
             return coins ?? new List<Coin>();
         }
@@ -53,7 +55,8 @@ Logger.Log("Coins returned: " + (coins?.Count ?? 0));
             string coinId,
             int days,
             string vsCurrency = "usd",
-            CancellationToken token = default){
+            CancellationToken token = default)
+        {
             var url = $"coins/{coinId}/market_chart?vs_currency={vsCurrency}&days={days}";
 
             var response = await _httpClient.GetAsync(url, token);
@@ -61,6 +64,16 @@ Logger.Log("Coins returned: " + (coins?.Count ?? 0));
             if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
             {
                 Logger.Log("RATE LIMITED chart for " + coinId);
+                if (!_rateLimitToastShown)
+                {
+                    _rateLimitToastShown = true;
+
+                    // Show toast asynchronously (don’t await to not block)
+                    _ = ToastHelper.ShowToastAsync("Rate limit reached, please wait...");
+
+                    // Reset flag after 5 seconds so user can see it again if still rate-limited
+                    Task.Delay(5000).ContinueWith(_ => _rateLimitToastShown = false);
+                }
                 return new List<PricePoint>();
             }
 
@@ -71,21 +84,30 @@ Logger.Log("Coins returned: " + (coins?.Count ?? 0));
             using var doc = JsonDocument.Parse(json);
 
             var prices = doc.RootElement.GetProperty("prices");
+            var volumes = doc.RootElement.GetProperty("total_volumes");
 
             var result = new List<PricePoint>();
 
-            foreach (var item in prices.EnumerateArray())
+            int count = Math.Min(prices.GetArrayLength(), volumes.GetArrayLength());
+
+            for (int i = 0; i < count; i++)
             {
-                var timestamp = item[0].GetInt64();
-                var price = item[1].GetDecimal();
+                var priceItem = prices[i];
+                var volumeItem = volumes[i];
+
+                var timestamp = priceItem[0].GetInt64();
+                var price = priceItem[1].GetDecimal();
+                var volume = volumeItem[1].GetDecimal();
 
                 result.Add(new PricePoint
                 {
-                    Date = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime,
-                    Price = price
+                    Date = DateTimeOffset
+                        .FromUnixTimeMilliseconds(timestamp)
+                        .DateTime,
+                    Price = price,
+                    Volume = volume
                 });
             }
-
             return result;
         }
     }

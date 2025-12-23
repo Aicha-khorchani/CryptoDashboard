@@ -25,7 +25,7 @@ namespace CryptoDashboard.Models
 
         [JsonPropertyName("image")]
         public string ImageUrl { get; set; } = string.Empty;
-        
+
         [JsonIgnore]
         public bool IsFavorite { get; set; } = false;
     }
